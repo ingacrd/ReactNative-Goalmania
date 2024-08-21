@@ -14,6 +14,7 @@ module.exports = {
           dark: "#797979",
           light: "#DADADA",
         }
+        
       },
       fontFamily: {
         pregular: ["Poppins-Regular", "sans-serif"],

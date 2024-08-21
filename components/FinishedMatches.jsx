@@ -34,13 +34,13 @@ const MatchItem = ({ activeItem, item}) => {
   return (
    
     <Animatable.View
-      className="mr-3"
+      className="mr-1"
       animation={isActve ? zoomIn : zoomOut}
       duration={500}
     >
 
-      <View className={`w-64 h-44 ${backGroundColor} flex justify-center items-center overflow-hidden rounded-3xl`}>
-          <Text className="text-xs text-white mb-1">{item.date}</Text>
+      <View className={`w-72 h-44 ${backGroundColor} flex justify-center items-center overflow-hidden rounded-3xl p-4`}>
+          <Text className="text-xs text-white mb-3">{item.date}</Text>
           
           <View className="flex flex-row mt-2">
             <View className="items-center">
@@ -52,7 +52,7 @@ const MatchItem = ({ activeItem, item}) => {
             </View>
 
             <View>
-              <Text className="text-3xl font-psemibold text-center text-white mx-5">{item.teams.home.goals} - {item.teams.away.goals}</Text>
+              <Text className="text-3xl font-psemibold text-center text-white mx-7">{item.teams.home.goals} - {item.teams.away.goals}</Text>
             </View>
 
             <View className="items-center">
