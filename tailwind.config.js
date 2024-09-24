@@ -13,8 +13,11 @@ module.exports = {
           DEFAULT: "#414158",
           dark: "#797979",
           light: "#DADADA",
+        },
+        gradient:{
+          blue: "#4568DC",
+          pink: "#B06AB3"
         }
-        
       },
       fontFamily: {
         pregular: ["Poppins-Regular", "sans-serif"],
