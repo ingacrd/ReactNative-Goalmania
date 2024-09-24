@@ -39,7 +39,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="home"
           options={{
-            title: 'Home',
+            title: 'Inicio',
             headerShown: false,
             tabBarIcon: ({color, focused}) => (
               <TabIcon 
@@ -54,7 +54,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="pool"
           options={{
-            title: 'Pool',
+            title: 'Apuesta',
             headerShown: false,
             tabBarIcon: ({color, focused}) => (
               <TabIcon 
@@ -70,7 +70,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'Profile',
+            title: 'Perfil',
             headerShown: false,
             tabBarIcon: ({color, focused}) => (
               <TabIcon 

@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import * as Animatable from 'react-native-animatable'
 import { icons } from '../constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 
 
@@ -25,52 +27,43 @@ const zoomOut = {
     scale:0.7,
   }
 }
-
-const MatchItem = ({ activeItem, item}) => {
-
-  const isActve = activeItem === item.id;
-  const backGroundColor = isActve ? 'bg-indigo-600' : 'bg-secondary'
+ 
+const MatchItem = ({ activeItem, item }) => {
+  const isActive = activeItem === item.id;
 
   return (
-   
     <Animatable.View
-      className="mr-1"
-      animation={isActve ? zoomIn : zoomOut}
+      className="mr-2"
+      animation={isActive ? zoomIn : zoomOut}
       duration={500}
     >
+      <LinearGradient
+        colors={isActive ? ['#4568DC', '#B06AB3'] : ['#414158', '#414158']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="w-72 h-44 rounded-3xl flex justify-center items-center p-4"
+      >
+        <Text className="text-xs text-white mb-2">{item.date}</Text>
 
-      <View className={`w-72 h-44 ${backGroundColor} flex justify-center items-center overflow-hidden rounded-3xl p-4`}>
-          <Text className="text-xs text-white mb-3">{item.date}</Text>
-          
-          <View className="flex flex-row mt-2">
-            <View className="items-center">
-              <Image source={{uri: item.teams.home.logo}}
-              className="w-12 h-12"
-              resizeMode='contain'
-              />
-              <Text className="text-xs text-white mb-1 text-center">{item.teams.home.name}</Text>
-            </View>
-
-            <View>
-              <Text className="text-3xl font-psemibold text-center text-white mx-7">{item.teams.home.goals} - {item.teams.away.goals}</Text>
-            </View>
-
-            <View className="items-center">
-              <Image source={{uri: item.teams.away.logo}}
-              className="w-12 h-12"
-              resizeMode='contain'
-              />
-              <Text className="text-xs text-white mb-1 text-center">{item.teams.away.name}</Text>
-            </View>
-              
+        <View className="flex-row mt-2 justify-between w-full">
+          <View className="items-center">
+            <Image source={{ uri: item.teams.home.logo }} className="w-12 h-12" resizeMode='contain' />
+            <Text className="text-xs text-white text-center mt-1">{item.teams.home.name}</Text>
           </View>
-          <Text className="text-xs text-white mb-4">{item.city}</Text>
-      </View>
 
-   </Animatable.View> 
-  )
+          <Text className="text-3xl font-psemibold text-white">{item.teams.home.goals} - {item.teams.away.goals}</Text>
+
+          <View className="items-center">
+            <Image source={{ uri: item.teams.away.logo }} className="w-12 h-12" resizeMode='contain' />
+            <Text className="text-xs text-white text-center mt-1">{item.teams.away.name}</Text>
+          </View>
+        </View>
+
+        <Text className="text-xs text-white mt-4">{item.city}</Text>
+      </LinearGradient>
+    </Animatable.View>
+  );
 }
-
 
 const FinishedMatches = ({posts}) => {
   const [activeItem, setActiveItem] = useState(posts[0])
@@ -79,14 +72,12 @@ const FinishedMatches = ({posts}) => {
       setActiveItem(viewableItems[0].key);
     }
   };
-  console.log(posts)
+  
   return (
      <FlatList
         data={posts}
-        
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
-            // <Text className="text-3xl text-white">{item.id}</Text>
             <MatchItem activeItem={activeItem} item={item}/>
         )}
         onViewableItemsChanged={viewableItemsChanged}
@@ -95,7 +86,10 @@ const FinishedMatches = ({posts}) => {
         }}
         contentOffset={{ x: 170 }}
         horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
     />
+
   )
 }
 
