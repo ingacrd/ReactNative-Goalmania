@@ -1,7 +1,10 @@
-module.exports = function(api) {
+// babel.config.js  (TEMP MINIMAL)
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
-    plugins: ["nativewind/babel"],
+    plugins: [
+      'react-native-worklets/plugin', // must be last
+    ],
   };
 };
