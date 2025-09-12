@@ -1,4 +1,4 @@
-
+import 'react-native-gesture-handler';
 import { Stack } from 'expo-router';
 import { SplashScreen } from 'expo-router';
 import {useFonts} from 'expo-font'
