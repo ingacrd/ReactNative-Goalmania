@@ -8,27 +8,26 @@ const NextMatch = ({match}) => {
   const { home, away } = teams;
 
   return (
-    <View className="m-auto mb-3 w-11/12 h-24 bg-secondary flex flex-row justify-around items-center overflow-hidden rounded-3xl p-4">
-      
-      <View className="flex flex-row items-center gap-3">
-        <Text className="text-xs text-white mb-1 text-center">{home.name}</Text>
+    <View style={{marginHorizontal:'auto', marginBottom:12, width:'90%', height:96, backgroundColor:'#414158', flexDirection:'row', justifyContent:'space-around', alignItems:'center', borderRadius:24, padding:16}}>
+
+      <View style={{flexDirection:'row', alignItems:'center'}}>
+        <Text style={{fontSize:12, color:'white', textAlign:'center'}}>{home.name}</Text>
         <Image source={{uri: home.logo}}
-              className="w-9 h-9"
+              style={{width:36, height:36}}
               resizeMode='contain'
               />
       </View>
       <View>
-        <Text className="text-xs text-white mb-1 text-center">{date}</Text>
-        <Text className="text-xs text-white mb-1 text-center">{time}</Text>
+        <Text style={{fontSize:12, color:'white', textAlign:'center'}}>{date}</Text>
+        <Text style={{fontSize:12, color:'white', textAlign:'center'}}>{time}</Text>
       </View>
-      <View className="flex flex-row items-center gap-3">
+      <View style={{flexDirection:'row', alignItems:'center'}}>
         <Image source={{uri: away.logo}}
-              className="w-9 h-9"
+              style={{width:36, height:36}}
               resizeMode='contain'
               />
-        <Text className="text-xs text-white mb-1 text-center">{away.name}</Text>
+        <Text style={{fontSize:12, color:'white', textAlign:'center'}}>{away.name}</Text>
       </View>
-      <View></View>
 
     </View>
 

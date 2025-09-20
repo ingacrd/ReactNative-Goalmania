@@ -5,8 +5,8 @@ import { View, Text } from "react-native"
 
 export default function App() {
     return (
-        <View className="flex-1 items-center justify-center bg-black">
-            <Text className="text-3xl font-pregular text-white">BIENVENIDOS A GOLMANIA</Text>
+        <View style={{flex:1, backgroundColor:'black', justifyContent:'center', alignItems:'center'}}>
+            <Text style={{fontSize:24, color:'white', fontFamily:'Poppins-SemiBold'}}>BIENVENIDOS A GOLMANIA</Text>
             <Link href="/home" style={{color: 'blue'}}>Go to Home</Link>
         </View>
     )
