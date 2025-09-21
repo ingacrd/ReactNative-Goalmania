@@ -59,24 +59,25 @@ const Home = () => {
 
   return (
 
-    <SafeAreaView style={{flex:1, backgroundColor:'#181928'}}>
-      <View style={{padding:16}}>
-        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
+    
+    <SafeAreaView className="bg-primary h-full">
+      <View className="my-6 px-4 space-y-6">
+        <View className="flex-row justify-between items-center mb-6">
           <View>
-            <Text style={{fontSize:14, color:'#D2B5FF'}}>Bienvenido,</Text>
-            <Text style={{fontSize:24, color:'white', fontFamily:'Poppins-SemiBold'}}>Ingaru</Text>
+            <Text className="font-pmedium text-sm text-gray-100">Bienvenido,</Text>
+            <Text className="text-2xl font-psemibold text-white">Ingaru</Text>
           </View>
           <Image
             source={images.logoSmall}
-            style={{width:64, height:64}}
+            className="w-16 h-16"
             resizeMode='contain'
           />
         </View>
 
         <View>
-          <Text style={{fontSize:18, color:'#D2B5FF', marginBottom:12}}>Últimas Eliminatorias</Text>
+          <Text className="text-lg font-pregular text-gray-100 mb-3">Últimas Eliminatorias</Text>
           <FinishedMatches posts={finishedMatches} />
-          <Text style={{fontSize:18, color:'#D2B5FF', marginTop:16}}>Próximas Eliminatorias</Text>
+          <Text className="text-lg font-pregular text-gray-100 mt-4">Próximas Eliminatorias</Text>
         </View>
       </View>
 
@@ -86,7 +87,6 @@ const Home = () => {
         renderItem={({item}) => <NextMatch match={item} />}
       />
     </SafeAreaView>
-
   )
 }
 
