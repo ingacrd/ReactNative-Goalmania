@@ -1,5 +1,5 @@
 
-import "./global.css"
+// import "./global.css"
 import { Link } from "expo-router"
 import { View, Text } from "react-native"
 
