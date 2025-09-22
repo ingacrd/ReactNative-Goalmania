@@ -1,24 +1,31 @@
-import { View, Text, FlatList, Image } from 'react-native'
+import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {images} from '../../constants'
 import FinishedMatches from '../../components/FinishedMatches'
 import NextMatch from '../../components/NextMatch'
 import { LinearGradient } from 'expo-linear-gradient';
-
+  
+import fixturesMock from "../../fixtures/fixtures.json";
 
 
 
 const Home = () => {
+
    const [futureMatches, setFutureMatches] = useState([]);
    const [finishedMatches, setFinishedMatches] = useState([]);
+
    useEffect(() => {
     // Function to fetch fixtures from the API
     const fetchMatches = async () => {
       try {
         
-        const response = await fetch('https://golmania.onrender.com/api/fixtures');
-        const data = await response.json();
+        // const response = await fetch('https://golmania.onrender.com/api/fixtures');
+        // const data = await response.json();
+         const response = await fetch('https://golmania.onrender.com/api/fixtures');
+         if (!response.ok) throw new Error(`HTTP ${response.status}`);
+         const data = await response.json();
+
         const allFixtures = data.allFixtures;
         const transformedMatches = allFixtures.map(fixture => ({
           id: fixture.id,  
@@ -50,7 +57,31 @@ const Home = () => {
 
 
       } catch (error) {
-        console.error('Error fetching fixtures:', error);
+        // console.error('Error fetching fixtures:', error);
+        +         console.warn('API caída o payload no-JSON. Usando fixtures locales:', error?.message || error);
+         const transformedMatches = fixturesMock.map(fixture => ({
+           id: fixture.id,
+           date: fixture.date,
+           time: fixture.time,
+           place: fixture.place,
+           city: fixture.city,
+           teams: {
+             home: {
+               name: fixture.teams_home_name,
+               logo: fixture.teams_home_logo,
+               goals: fixture.teams_home_goals
+             },
+             away: {
+               name: fixture.teams_away_name,
+               logo: fixture.teams_away_logo,
+               goals: fixture.teams_away_goals
+             }
+           }
+         }));
+         const matchesWithGoals = transformedMatches.filter(f => f.teams.home.goals !== null);
+         const matchesWithNoGoals = transformedMatches.filter(f => f.teams.home.goals == null);
+         setFinishedMatches(matchesWithGoals);
+         setFutureMatches(matchesWithNoGoals);
       }
     };
 
@@ -59,6 +90,7 @@ const Home = () => {
 
   return (
 
+    
     <SafeAreaView className="bg-primary h-full">
       <View className="my-6 px-4 space-y-6">
         <View className="flex-row justify-between items-center mb-6">
@@ -86,7 +118,6 @@ const Home = () => {
         renderItem={({item}) => <NextMatch match={item} />}
       />
     </SafeAreaView>
-
   )
 }
 

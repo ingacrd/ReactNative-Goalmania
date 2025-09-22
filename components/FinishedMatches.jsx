@@ -33,7 +33,7 @@ const MatchItem = ({ activeItem, item }) => {
 
   return (
     <Animatable.View
-      className="mr-2"
+      style={{marginRight:8}}
       animation={isActive ? zoomIn : zoomOut}
       duration={500}
     >
@@ -41,25 +41,25 @@ const MatchItem = ({ activeItem, item }) => {
         colors={isActive ? ['#4568DC', '#B06AB3'] : ['#414158', '#414158']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        className="w-72 h-44 rounded-3xl flex justify-center items-center p-4"
+        style={{width:288, height:176, borderRadius:24, justifyContent:'center', alignItems:'center', padding:16}}
       >
-        <Text className="text-xs text-white mb-2">{item.date}</Text>
+        <Text style={{fontSize:12, color:'white', marginBottom:8}}>{item.date}</Text>
 
-        <View className="flex-row mt-2 justify-between w-full">
-          <View className="items-center">
-            <Image source={{ uri: item.teams.home.logo }} className="w-12 h-12" resizeMode='contain' />
-            <Text className="text-xs text-white text-center mt-1">{item.teams.home.name}</Text>
+        <View style={{flexDirection:'row', marginTop:8, justifyContent:'space-between', width:'100%'}}>
+          <View style={{alignItems:'center'}}>
+            <Image source={{ uri: item.teams.home.logo }} style={{width:48, height:48}} resizeMode='contain' />
+            <Text style={{fontSize:12, color:'white', textAlign:'center', marginTop:4}}>{item.teams.home.name}</Text>
           </View>
 
-          <Text className="text-3xl font-psemibold text-white">{item.teams.home.goals} - {item.teams.away.goals}</Text>
+          <Text style={{fontSize:30, color:'white', fontFamily:'Poppins-SemiBold'}}>{item.teams.home.goals} - {item.teams.away.goals}</Text>
 
-          <View className="items-center">
-            <Image source={{ uri: item.teams.away.logo }} className="w-12 h-12" resizeMode='contain' />
-            <Text className="text-xs text-white text-center mt-1">{item.teams.away.name}</Text>
+          <View style={{alignItems:'center'}}>
+            <Image source={{ uri: item.teams.away.logo }} style={{width:48, height:48}} resizeMode='contain' />
+            <Text style={{fontSize:12, color:'white', textAlign:'center', marginTop:4}}>{item.teams.away.name}</Text>
           </View>
         </View>
 
-        <Text className="text-xs text-white mt-4">{item.city}</Text>
+        <Text style={{fontSize:12, color:'white', marginTop:16}}>{item.city}</Text>
       </LinearGradient>
     </Animatable.View>
   );
