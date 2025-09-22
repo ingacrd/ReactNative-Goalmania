@@ -1,5 +1,6 @@
 
-import "./global.css"
+// import "./global.css"
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar, Platform } from "react-native";
 import { Link } from "expo-router"

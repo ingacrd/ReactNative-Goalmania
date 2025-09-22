@@ -1,0 +1,67 @@
+[
+  {
+    "id": "m1",
+    "date": "2025-09-21",
+    "time": "14:00",
+    "place": "Estadio Expo",
+    "city": "Brossard",
+    "teams_home_name": "Golmania FC",
+    "teams_home_logo": null,
+    "teams_home_goals": 2,
+    "teams_away_name": "React United",
+    "teams_away_logo": null,
+    "teams_away_goals": 1
+  },
+  {
+    "id": "m2",
+    "date": "2025-09-28",
+    "time": "14:00",
+    "place": "Arena Metro",
+    "city": "Montreal",
+    "teams_home_name": "Nativewind SC",
+    "teams_home_logo": null,
+    "teams_home_goals": null,
+    "teams_away_name": "Tailwind Rangers",
+    "teams_away_logo": null,
+    "teams_away_goals": null
+  },
+  {
+    "id": "m3",
+    "date": "2025-10-05",
+    "time": "16:00",
+    "place": "Stadium Central",
+    "city": "Toronto",
+    "teams_home_name": "Expo FC",
+    "teams_home_logo": null,
+    "teams_home_goals": 3,
+    "teams_away_name": "Metro United",
+    "teams_away_logo": null,
+    "teams_away_goals": 0
+  },
+  {
+    "id": "m4",
+    "date": "2025-10-12",
+    "time": "15:00",
+    "place": "Arena North",
+    "city": "Vancouver",
+    "teams_home_name": "Windy City",
+    "teams_home_logo": null,
+    "teams_home_goals": null,
+    "teams_away_name": "Sunny Side",
+    "teams_away_logo": null,
+    "teams_away_goals": null
+  },
+  {
+    "id": "m5",
+    "date": "2025-10-19",
+    "time": "13:00",
+    "place": "Field Park",
+    "city": "Calgary",
+    "teams_home_name": "React Rangers",
+    "teams_home_logo": null,
+    "teams_home_goals": 1,
+    "teams_away_name": "Nativewind FC",
+    "teams_away_logo": null,
+    "teams_away_goals": 2
+  }
+]
