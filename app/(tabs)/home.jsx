@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Image, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {images} from '../../constants'
 import FinishedMatches from '../../components/FinishedMatches'

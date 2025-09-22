@@ -5,6 +5,7 @@ import { SplashScreen } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {useFonts} from 'expo-font'
 import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 SplashScreen.preventAutoHideAsync();
@@ -24,15 +25,16 @@ const RootLayout = () => {
   if(!fontsLoaded) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* <Stack screenOptions={{ headerShown: false }} /> */}
-      <Stack>
-         <Stack.Screen name="index" options={{headerShown: false}}/>
-         <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-         <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-       </Stack>
-    </GestureHandlerRootView>
-
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {/* <Stack screenOptions={{ headerShown: false }} /> */}
+        <Stack>
+           <Stack.Screen name="index" options={{headerShown: false}}/>
+           <Stack.Screen name="(auth)" options={{headerShown: false}}/>
+           <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+         </Stack>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 

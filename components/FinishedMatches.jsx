@@ -2,7 +2,6 @@ import { View, Text, FlatList, TouchableOpacity, ImageBackground, Image, Alert }
 import React, { useState } from 'react'
 import * as Animatable from 'react-native-animatable'
 import { icons } from '../constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
