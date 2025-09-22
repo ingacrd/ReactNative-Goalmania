@@ -1,4 +1,3 @@
-// babel.config.js  (TEMP MINIMAL)
 module.exports = function (api) {
   api.cache(true);
   return {
@@ -7,7 +6,7 @@ module.exports = function (api) {
       "nativewind/babel",
     ],
     plugins: [
-      'react-native-worklets/plugin', // must be last
+      'react-native-worklets/plugin', // SIEMPRE al final (reemplaza al viejo reanimated/plugin)
     ],
   };
 };

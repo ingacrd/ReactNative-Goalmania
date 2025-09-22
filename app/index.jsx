@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar, Platform } from "react-native";
 import { Link } from "expo-router"
-import { View, Text } from "react-native"
+import { View, Text, Pressable } from "react-native"
 
 export default function App() {
     return (
-
         <SafeAreaView style={{ flex: 1 }}>
         {Platform.OS === "android" && (
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
