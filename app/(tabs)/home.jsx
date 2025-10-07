@@ -43,7 +43,7 @@ const toNullableInt = (v) => {
   return Number.isFinite(n) ? n : null;
 };
 
-/** Turn ApiFootballDto item into the UI shape your components expect */
+/** Turn ApiFootballDto item into the UI shape expected */
 const mapItemToUi = (item) => {
   const fixture = item?.fixture ?? {};
   const venue = fixture?.venue ?? {};
@@ -51,27 +51,35 @@ const mapItemToUi = (item) => {
   const home = teams?.home ?? {};
   const away = teams?.away ?? {};
   const goals = item?.goals ?? {};
-
-  // Prefer team-embedded goals if present; otherwise use root goals.{home,away}
   const homeGoals = home?.goals ?? goals?.home ?? null;
   const awayGoals = away?.goals ?? goals?.away ?? null;
 
   // Derive date/time strings from ISO datetime
   let dateStr = '';
   let timeStr = '';
+  let startTs = null;
+
+
   if (fixture?.date) {
-    const dt = new Date(fixture.date);
-    // Keep formatting simple and stable for now
-    dateStr = dt.toISOString().slice(0, 10); // YYYY-MM-DD
-    timeStr = dt.toISOString().slice(11, 16); // HH:mm (UTC-based)
-  }
+  const dt = new Date(fixture.date); // ISO -> Date
+
+  // Formato local (según el dispositivo)
+  dateStr = dt.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  startTs = dt.getTime();
+}
 
   return {
-    id: String(fixture?.id ?? ''), // keyExtractor wants string
+    id: String(fixture?.id ?? ''), 
     date: dateStr,
     time: timeStr,
     place: venue?.name ?? '',
     city: venue?.city ?? '',
+    startTs, 
     teams: {
       home: {
         name: home?.name ?? '',
@@ -104,23 +112,20 @@ const Home = () => {
     const fetchMatches = async () => {
       try {
         console.log('📡 Fetching from:', API_URL);
-        // const response = await fetch('https://golmania.onrender.com/api/fixtures');
-        // const data = await response.json();
-         //const response = await fetch('https://golmania.onrender.com/api/fixtures');
-         const res = await fetch(API_URL, { headers: { Accept: 'application/json' } });
-         console.log('✅ Response status:', res.status);
 
-         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-         //const data = await response.json();
+        const res = await fetch(API_URL, { headers: { Accept: 'application/json' } });
+        console.log('✅ Response status:', res.status);
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const raw = await res.text();
         console.log('🧾 Raw payload:', raw.slice(0, 500)); // limit length
 
         let data;
         try {
           data = JSON.parse(raw);
-        } catch {
-          console.error('❌ JSON parse error:', err.message);
+        } catch(err) {
+          console.error('❌ JSON parse error:', err?.message);
           throw new Error('Payload no-JSON');
         }
 
@@ -128,16 +133,14 @@ const Home = () => {
         const items = extractItems(data);
         const transformed = items.map(mapItemToUi);
 
-        const finished = transformed.filter(f => f.teams?.home?.goals !== null && f.teams?.away?.goals !== null);
-        const upcoming = transformed.filter(f => f.teams?.home?.goals === null || f.teams?.away?.goals === null);
-                 
-
+        const now = Date.now();
+        const upcoming = transformed.filter(f => f.startTs && f.startTs > now);
+        const finished = transformed.filter(f => f.startTs && f.startTs <= now);         
         setFinishedMatches(finished);
         setFutureMatches(upcoming);
 
-
       } catch (error) {
-        // console.error('Error fetching fixtures:', error);
+
         console.warn('API caída o payload no-JSON. Usando fixtures locales:', error?.message || error);
          const transformedMatches = fixturesMock.map(fixture => ({
            id: fixture.id,
@@ -186,9 +189,9 @@ const Home = () => {
         </View>
 
         <View>
-          <Text className="text-lg font-pregular text-gray-100 mb-3">Últimas Eliminatorias</Text>
+          <Text className="text-lg font-pregular text-gray-100 mb-3">Últimos Partidos</Text>
           <FinishedMatches posts={finishedMatches} />
-          <Text className="text-lg font-pregular text-gray-100 mt-4">Próximas Eliminatorias</Text>
+          <Text className="text-lg font-pregular text-gray-100 mt-4">Próximos Partidos</Text>
         </View>
       </View>
 
