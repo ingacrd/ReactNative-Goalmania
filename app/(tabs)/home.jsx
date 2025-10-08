@@ -1,5 +1,5 @@
-import { View, Text, FlatList, Image, ActivityIndicator, Platform } from 'react-native'
-import { useEffect, useState } from 'react'
+import { View, Text, FlatList, Image, ActivityIndicator, RefreshControl, Platform } from 'react-native'
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {images} from '../../constants'
 import FinishedMatches from '../../components/FinishedMatches'
@@ -7,7 +7,8 @@ import NextMatch from '../../components/NextMatch'
 //import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
   
-import fixturesMock from "../../fixtures/fixtures.json";
+//import fixturesMock from "../../fixtures/fixtures.json";
+import fixturesMock from "../../assets/mock/fixtures.json";
 
 // ==== 1) Resolver host correcto para RN ====
 const resolveHost = () => {
@@ -23,14 +24,9 @@ const resolveHost = () => {
     if (ip) return ip;             // <-- use 192.168.x.x
   } catch {}
 
-
-  // Android Emulator (AVD): localhost del host = 10.0.2.2
-  try{
     if (Platform.OS === 'android') return '10.0.2.2';
     // iOS Simulator: sí usa localhost al host
     if (Platform.OS === 'ios') return 'localhost';
-  }catch{}
-
 
   return 'localhost';
 };
@@ -104,72 +100,87 @@ const extractItems = (payload) => {
 
 const Home = () => {
 
-   const [futureMatches, setFutureMatches] = useState([]);
-   const [finishedMatches, setFinishedMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
+  const [matches, setMatches] = useState([]); // guardamos TODO y derivamos vistas por useMemo
 
-   useEffect(() => {
-    // Function to fetch fixtures from the API
-    const fetchMatches = async () => {
+  const abortRef = useRef(null);
+
+  const fetchMatches = async ({ isRefresh = false } = {}) => {
+    if (!isRefresh) setLoading(true);
+    setError("");
+    abortRef.current?.abort?.();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    try {
+      if (__DEV__) console.log("📡 Fetching:", API_URL);
+      const res = await fetch(API_URL, {
+        headers: { Accept: "application/json" },
+        signal: ctrl.signal,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      // Evita crash si el backend devuelve texto/HTML por error
+      const raw = await res.text();
+      let data;
       try {
-        console.log('📡 Fetching from:', API_URL);
-
-        const res = await fetch(API_URL, { headers: { Accept: 'application/json' } });
-        console.log('✅ Response status:', res.status);
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        const raw = await res.text();
-        console.log('🧾 Raw payload:', raw.slice(0, 500)); // limit length
-
-        let data;
-        try {
-          data = JSON.parse(raw);
-        } catch(err) {
-          console.error('❌ JSON parse error:', err?.message);
-          throw new Error('Payload no-JSON');
-        }
-
-        
-        const items = extractItems(data);
-        const transformed = items.map(mapItemToUi);
-
-        const now = Date.now();
-        const upcoming = transformed.filter(f => f.startTs && f.startTs > now);
-        const finished = transformed.filter(f => f.startTs && f.startTs <= now);         
-        setFinishedMatches(finished);
-        setFutureMatches(upcoming);
-
-      } catch (error) {
-
-        console.warn('API caída o payload no-JSON. Usando fixtures locales:', error?.message || error);
-         const transformedMatches = fixturesMock.map(fixture => ({
-           id: fixture.id,
-           date: fixture.date,
-           time: fixture.time,
-           place: fixture.place,
-           city: fixture.city,
-           teams: {
-             home: {
-               name: fixture.teams_home_name,
-               logo: fixture.teams_home_logo,
-               goals: fixture.teams_home_goals
-             },
-             away: {
-               name: fixture.teams_away_name,
-               logo: fixture.teams_away_logo,
-               goals: fixture.teams_away_goals
-             }
-           }
-         }));
-         const matchesWithGoals = transformedMatches.filter(f => f.teams.home.goals !== null);
-         const matchesWithNoGoals = transformedMatches.filter(f => f.teams.home.goals == null);
-         setFinishedMatches(matchesWithGoals);
-         setFutureMatches(matchesWithNoGoals);
+        data = JSON.parse(raw);
+      } catch (e) {
+        throw new Error("Payload no-JSON");
       }
-    };
 
+      const items = extractItems(data);
+      const mapped = items.map(mapItemToUi).filter((m) => m.id);
+      setMatches(mapped);
+    } catch (e) {
+      console.warn("⚠️ API caída o payload no-JSON. Usando mock local:", e?.message);
+
+      // ===== MOCK de respaldo =====
+      // 1) Si tienes el archivo en assets/mock/fixtures.json, descomenta:
+      const items = extractItems(fixturesMock);
+      // 2) Si prefieres, pega aquí un require dinámico:
+      // const items = extractItems(require("../../assets/mock/fixtures.json"));
+      // 3) O como mínimo, mantenemos la lista vacía pero sin romper la UI:
+
+      
+      //const items = [];
+      const mapped = items.map(mapItemToUi).filter((m) => m.id);
+      setMatches(mapped);
+
+      setError("Mostrando datos locales. Ver consola para detalles.");
+    } finally {
+      if (isRefresh) setRefreshing(false);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchMatches();
+    return () => abortRef.current?.abort?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+   const onRefresh = () => {
+    setRefreshing(true);
+    fetchMatches({ isRefresh: true });
+  };
+
+  const { futureMatches, finishedMatches } = useMemo(() => {
+    const now = Date.now();
+    const withTs = matches.filter((m) => typeof m.startTs === "number");
+
+    const future = withTs
+      .filter((m) => m.startTs > now)
+      .sort((a, b) => a.startTs - b.startTs); // ascendente
+    const finished = withTs
+      .filter((m) => m.startTs <= now)
+      .sort((a, b) => b.startTs - a.startTs); // descendente
+
+    return { futureMatches: future, finishedMatches: finished };
+  }, [matches]);
+
 
   return (
 
@@ -187,21 +198,42 @@ const Home = () => {
             resizeMode='contain'
           />
         </View>
-
+        {/* Encabezado Últimos Partidos + Loader */}
         <View>
-          <Text className="text-lg font-pregular text-gray-100 mb-3">Últimos Partidos</Text>
-          <FinishedMatches posts={finishedMatches} />
-          <Text className="text-lg font-pregular text-gray-100 mt-4">Próximos Partidos</Text>
-        </View>
-      </View>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-lg font-pregular text-gray-100 mb-3">Últimos Partidos</Text>
+            {loading && <ActivityIndicator size="small" />}
+          </View>
+          {/* Empty / Error states para sección Finished */}
+          {error ? (
+            <Text className="text-xs text-yellow-200 mb-2">{error}</Text>
+          ) : null}
 
+          <FinishedMatches posts={finishedMatches} />
+          <View className="flex-row items-center justify-between mt-4">
+            <Text className="text-lg font-pregular text-gray-100">Próximos Partidos</Text>
+            <Text className="text-xs text-gray-300">({futureMatches.length})</Text>
+          </View>
+      </View>
+    </View>
       <FlatList
         data={futureMatches}
         keyExtractor={(item) => item.id}
-        renderItem={({item}) => <NextMatch match={item} />}
+        renderItem={({ item }) => <NextMatch match={item} />}
+        ListEmptyComponent={
+          !loading ? (
+            <View className="px-4 pb-8">
+              <Text className="text-gray-300 text-sm">
+                No hay partidos próximos por ahora.
+              </Text>
+            </View>
+          ) : null
+        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={{ paddingBottom: 24 }}
       />
     </SafeAreaView>
-  )
+  );
 }
 
 export default Home

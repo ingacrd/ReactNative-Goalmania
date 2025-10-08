@@ -1,18 +1,17 @@
 import { View, Text, Image } from 'react-native'
-import React from 'react'
-import { Tabs, Redirect } from 'expo-router'
+import { Tabs } from 'expo-router'
 import {icons} from '../../constants'
 
 const TabIcon = ({icon, color, name, focused}) => {
   return(
-    <View className="items-center justify-center gap-2">
+    <View className="items-center justify-center gap-1">
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
         className="w-6 h-6"
       />
-      <Text className={`${focused? 'font-psemibold' : 'font-pregular'} text-xs`} style={{color: color}}>
+      <Text className={`${focused? 'font-psemibold' : 'font-pregular'} text-xs`} style={{color}}>
         {name}
       </Text>
     </View>
@@ -24,6 +23,7 @@ const TabsLayout = () => {
   return (
     <>
       <Tabs
+        initialRouteName="home"
         screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: '#DADADA',
@@ -32,7 +32,8 @@ const TabsLayout = () => {
           backgroundColor: '#222232',
           borderTopWidth: 1,
           borderTopColor: '#222232',
-          height:84,
+          height:104,
+          
         }
         }}
       >
@@ -41,6 +42,9 @@ const TabsLayout = () => {
           options={{
             title: 'Inicio',
             headerShown: false,
+            tabBarIconStyle:{
+              
+            },
             tabBarIcon: ({color, focused}) => (
               <TabIcon 
                 icon={icons.home}
