@@ -1,0 +1,116 @@
+[
+  {
+    "id": 1100239,
+    "fixture": {
+      "id": 1100239,
+      "date": "2023-09-13T00:30:00+00:00",
+      "venue": {
+        "id": 319,
+        "name": "Estadio Monumental David Arellano",
+        "city": "Santiago de Chile"
+      },
+      "status": {
+        "longName": null,
+        "long": "Match Finished"
+      }
+    },
+    "teams": {
+      "home": {
+        "id": 2383,
+        "name": "Chile",
+        "logo": "https://media.api-sports.io/football/teams/2383.png",
+        "winner": null
+      },
+      "away": {
+        "id": 8,
+        "name": "Colombia",
+        "logo": "https://media.api-sports.io/football/teams/8.png",
+        "winner": null
+      }
+    },
+    "goals": {
+      "home": 0,
+      "away": 0
+    },
+    "league": {
+      "id": 34,
+      "season": 2026
+    }
+  },
+  {
+    "id": 1100240,
+    "fixture": {
+      "id": 1100240,
+      "date": "2023-09-12T21:00:00+00:00",
+      "venue": {
+        "id": 471,
+        "name": "Estadio Rodrigo Paz Delgado",
+        "city": "Quito"
+      },
+      "status": {
+        "longName": null,
+        "long": "Match Finished"
+      }
+    },
+    "teams": {
+      "home": {
+        "id": 2382,
+        "name": "Ecuador",
+        "logo": "https://media.api-sports.io/football/teams/2382.png",
+        "winner": true
+      },
+      "away": {
+        "id": 7,
+        "name": "Uruguay",
+        "logo": "https://media.api-sports.io/football/teams/7.png",
+        "winner": false
+      }
+    },
+    "goals": {
+      "home": 2,
+      "away": 1
+    },
+    "league": {
+      "id": 34,
+      "season": 2026
+    }
+  },
+  {
+    "id": 1100241,
+    "fixture": {
+      "id": 1100241,
+      "date": "2023-09-13T22:00:00+00:00",
+      "venue": {
+        "id": 1660,
+        "name": "Estadio Monumental de Maturín",
+        "city": "Maturín"
+      },
+      "status": {
+        "longName": null,
+        "long": "Match Finished"
+      }
+    },
+    "teams": {
+      "home": {
+        "id": 2379,
+        "name": "Venezuela",
+        "logo": "https://media.api-sports.io/football/teams/2379.png",
+        "winner": true
+      },
+      "away": {
+        "id": 2380,
+        "name": "Paraguay",
+        "logo": "https://media.api-sports.io/football/teams/2380.png",
+        "winner": false
+      }
+    },
+    "goals": {
+      "home": 1,
+      "away": 0
+    },
+    "league": {
+      "id": 34,
+      "season": 2026
+    }
+  }
+]
