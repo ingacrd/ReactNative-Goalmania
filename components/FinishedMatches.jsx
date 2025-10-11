@@ -1,95 +1,167 @@
-import { View, Text, FlatList, TouchableOpacity, ImageBackground, Image, Alert } from 'react-native'
-import React, { useState } from 'react'
-import * as Animatable from 'react-native-animatable'
-import { icons } from '../constants';
+import { View, Text, FlatList, Image, Animated, Dimensions, StyleSheet, Easing } from 'react-native'
+import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = Math.min(300, Math.round(SCREEN_WIDTH * 0.82));
+const CARD_HEIGHT = 176;           
+const ITEM_SPACING = 5;          
+const SNAP_INTERVAL = CARD_WIDTH + ITEM_SPACING;
+const SIDE_PADDING = Math.round((SCREEN_WIDTH - CARD_WIDTH) / 2);
 
+const Team = ({ name, logo }) => (
+  <View className="items-center" style={{ maxWidth: CARD_WIDTH * 0.38 }}>
+    <Image source={{ uri: logo }} className="w-12 h-12" resizeMode="contain" />
+    <Text numberOfLines={1} className="text-white text-[12px] mt-1 text-center">
+      {name}
+    </Text>
+  </View>
+);
 
+const ResultCard = ({ item, index, scrollX}) => {
 
+   const inputRange = [
+    (index - 1) * SNAP_INTERVAL,
+    index * SNAP_INTERVAL,
+    (index + 1) * SNAP_INTERVAL,
+  ];
 
-const zoomIn = {
-  0: {
-    scale: 0.7
-  },
-  1: {
-    scale:1,
-  }
-}
+  const centerProgress = scrollX.interpolate({
+    inputRange,
+    outputRange: [0, 1, 0],
+    extrapolate: 'clamp',
+  });
 
-const zoomOut = {
-  0: {
-    scale: 1
-  },
-  1: {
-    scale:0.7,
-  }
-}
- 
-const MatchItem = ({ activeItem, item }) => {
-  const isActive = activeItem === item.id;
+  const scale = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.70, 1, 0.70],
+    extrapolate: 'clamp',
+  });
+
+  const opacity = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.7, 1, 0.7],
+    extrapolate: 'clamp',
+  });
+
+  const activeGradientOpacity = centerProgress;         
+  const inactiveGradientOpacity = Animated.subtract(1, centerProgress);
+
+  const scoreHome =
+    item?.teams?.home?.goals ?? '—';
+  const scoreAway =
+    item?.teams?.away?.goals ?? '—';
 
   return (
-    <Animatable.View
-      style={{marginRight:8}}
-      animation={isActive ? zoomIn : zoomOut}
-      duration={500}
+    <Animated.View
+      style={{
+        width: SNAP_INTERVAL,       
+        alignItems: 'center',
+        opacity,
+        transform: [{ scale }],
+        
+      }}
     >
-      <LinearGradient
-        colors={isActive ? ['#4568DC', '#B06AB3'] : ['#414158', '#414158']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{width:288, height:176, borderRadius:24, justifyContent:'center', alignItems:'center', padding:16}}
+
+      <View
+        style={{
+          width: CARD_WIDTH,
+          height: CARD_HEIGHT,
+          borderRadius: 24,
+          overflow: 'hidden', 
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
-        <Text style={{fontSize:12, color:'white', marginBottom:8}}>{item.date}</Text>
+        <Animated.View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFillObject, { opacity: inactiveGradientOpacity }]}
+        >
+          <LinearGradient
+            colors={['#414158', '#414158']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+        </Animated.View>
 
-        <View style={{flexDirection:'row', marginTop:8, justifyContent:'space-between', width:'100%'}}>
-          <View style={{alignItems:'center'}}>
-            <Image source={{ uri: item.teams.home.logo }} style={{width:48, height:48}} resizeMode='contain' />
-            <Text style={{fontSize:12, color:'white', textAlign:'center', marginTop:4}}>{item.teams.home.name}</Text>
+        <Animated.View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFillObject, { opacity: activeGradientOpacity }]}
+        >
+          <LinearGradient
+            colors={['#5B7FFF', '#B55DFF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+        </Animated.View>
+
+        <Text className="text-white text-[12px] mb-2">{item.date}</Text>
+        <View className="flex-row mt-2 justify-between w-full px-4">
+          <Team name={item.teams.home.name} logo={item.teams.home.logo} />
+          <View className="items-center justify-center px-2">
+            <Text className="text-white text-[34px] font-psemibold tracking-wide">
+              {scoreHome} - {scoreAway}
+            </Text>
           </View>
-
-          <Text style={{fontSize:30, color:'white', fontFamily:'Poppins-SemiBold'}}>{item.teams.home.goals} - {item.teams.away.goals}</Text>
-
-          <View style={{alignItems:'center'}}>
-            <Image source={{ uri: item.teams.away.logo }} style={{width:48, height:48}} resizeMode='contain' />
-            <Text style={{fontSize:12, color:'white', textAlign:'center', marginTop:4}}>{item.teams.away.name}</Text>
-          </View>
+          <Team name={item.teams.away.name} logo={item.teams.away.logo} />
         </View>
 
-        <Text style={{fontSize:12, color:'white', marginTop:16}}>{item.city}</Text>
-      </LinearGradient>
-    </Animatable.View>
+        {item.city ? (
+          <Text className="text-white/85 text-[12px] mt-3" numberOfLines={1}>
+            {item.city}
+          </Text>
+        ) : null}
+      </View>
+    </Animated.View>
   );
-}
+};
 
-const FinishedMatches = ({posts}) => {
-  const [activeItem, setActiveItem] = useState(posts[0])
-  const viewableItemsChanged = ({ viewableItems }) => {
-    if (viewableItems.length > 0) {
-      setActiveItem(viewableItems[0].key);
-    }
-  };
+const FinishedMatches = ({ posts = [] }) => {
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const data = useMemo(() => posts ?? [], [posts]);
+  const keyExtractor = useCallback((item, i) => item?.id?.toString() ?? `k-${i}`, []);
+
+  if (!data?.length) {
+    return (
+      <View className="px-4 py-3">
+        <Text className="text-gray-300 text-[13px]">No hay resultados recientes.</Text>
+      </View>
+    );
+  }
   
   return (
-     <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => (
-            <MatchItem activeItem={activeItem} item={item}/>
-        )}
-        onViewableItemsChanged={viewableItemsChanged}
-        viewabilityConfig={{
-        itemVisiblePercentThreshold: 70,
-        }}
-        contentOffset={{ x: 170 }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+     <Animated.FlatList
+      data={data}
+      keyExtractor={keyExtractor}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      bounces={false}
+      decelerationRate="fast"
+      snapToInterval={SNAP_INTERVAL}
+      contentContainerStyle={{ paddingHorizontal: SIDE_PADDING }}
+      onScroll={Animated.event(
+        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+        { useNativeDriver: true }
+      )}
+      scrollEventThrottle={16}
+      getItemLayout={(_, index) => ({
+        length: SNAP_INTERVAL,
+        offset: SNAP_INTERVAL * index,
+        index,
+      })}
+      initialNumToRender={3}
+      renderItem={({ item, index }) => (
+        <ResultCard
+          item={item}
+          index={index}
+          scrollX={scrollX}
+        />
+      )}
     />
+  );
+};
 
-  )
-}
-
-export default FinishedMatches
+export default FinishedMatches;

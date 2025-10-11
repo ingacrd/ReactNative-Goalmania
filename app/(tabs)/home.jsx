@@ -186,53 +186,51 @@ const Home = () => {
 
     
     <SafeAreaView className="bg-primary h-full">
-      <View className="my-6 px-4 space-y-6">
-        <View className="flex-row justify-between items-center mb-6">
-          <View>
-            <Text className="font-pmedium text-sm text-gray-100">Bienvenido,</Text>
-            <Text className="text-2xl font-psemibold text-white">Ingaru</Text>
+    <FlatList
+      data={futureMatches}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <NextMatch match={item} />}
+      ListHeaderComponent={
+        <View className="my-6 space-y-6">
+          {/* Top bar */}
+          <View className="px-4 flex-row justify-between items-center">
+            <View>
+              <Text className="font-pmedium text-sm text-gray-100">Bienvenido,</Text>
+              <Text className="text-2xl font-psemibold text-white">Ingaru</Text>
+            </View>
+            <Image source={images.logoSmall} className="w-14 h-14" resizeMode="contain" />
           </View>
-          <Image
-            source={images.logoSmall}
-            className="w-16 h-16"
-            resizeMode='contain'
-          />
-        </View>
-        {/* Encabezado Últimos Partidos + Loader */}
-        <View>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-lg font-pregular text-gray-100 mb-3">Últimos Partidos</Text>
-            {loading && <ActivityIndicator size="small" />}
-          </View>
-          {/* Empty / Error states para sección Finished */}
-          {error ? (
-            <Text className="text-xs text-yellow-200 mb-2">{error}</Text>
-          ) : null}
 
-          <FinishedMatches posts={finishedMatches} />
-          <View className="flex-row items-center justify-between mt-4">
+          {/* Finished */}
+          <View className = "mt-3">
+            <View className="px-4 flex-row items-center justify-between mb-2">
+              <Text className="text-lg font-pregular text-gray-100">Últimos Partidos</Text>
+              {loading && <ActivityIndicator size="small" />}
+            </View>
+            {error ? (
+              <Text className="px-4 text-[11px] text-yellow-200 mt-1">{error}</Text>
+            ) : null}
+            <FinishedMatches posts={finishedMatches} />
+          </View>
+
+          {/* Upcoming header */}
+          <View className="px-4 flex-row items-center justify-between mt-3">
             <Text className="text-lg font-pregular text-gray-100">Próximos Partidos</Text>
             <Text className="text-xs text-gray-300">({futureMatches.length})</Text>
           </View>
-      </View>
-    </View>
-      <FlatList
-        data={futureMatches}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <NextMatch match={item} />}
-        ListEmptyComponent={
-          !loading ? (
-            <View className="px-4 pb-8">
-              <Text className="text-gray-300 text-sm">
-                No hay partidos próximos por ahora.
-              </Text>
-            </View>
-          ) : null
-        }
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        contentContainerStyle={{ paddingBottom: 24 }}
-      />
-    </SafeAreaView>
+        </View>
+      }
+      ListEmptyComponent={
+        !loading ? (
+          <View className="px-4 pb-8">
+            <Text className="text-gray-300 text-sm">No hay partidos próximos por ahora.</Text>
+          </View>
+        ) : null
+      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      contentContainerStyle={{ paddingBottom: 28 }}
+    />
+  </SafeAreaView>
   );
 }
 
