@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = Math.min(300, Math.round(SCREEN_WIDTH * 0.82));
+const CARD_WIDTH = Math.min(300, Math.round(SCREEN_WIDTH * 0.65));
 const CARD_HEIGHT = 176;           
 const ITEM_SPACING = 5;          
 const SNAP_INTERVAL = CARD_WIDTH + ITEM_SPACING;
