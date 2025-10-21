@@ -104,6 +104,13 @@ const TabsLayout = () => {
             )
           }}
         />
+        <Tabs.Screen
+          name="fixture/[id]"
+          options={{
+            href: null,           
+            headerShown: false,   
+          }}
+        />
 
       </Tabs>
     </>

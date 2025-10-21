@@ -1,4 +1,5 @@
-import { View, Text, FlatList, Image, Animated, Dimensions, StyleSheet, Easing } from 'react-native'
+import { View, Text, FlatList, Image, Animated, Dimensions, StyleSheet, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -120,6 +121,7 @@ const ResultCard = ({ item, index, scrollX}) => {
 };
 
 const FinishedMatches = ({ posts = [] }) => {
+  const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
   const data = useMemo(() => posts ?? [], [posts]);
   const keyExtractor = useCallback((item, i) => item?.id?.toString() ?? `k-${i}`, []);
@@ -154,11 +156,17 @@ const FinishedMatches = ({ posts = [] }) => {
       })}
       initialNumToRender={3}
       renderItem={({ item, index }) => (
-        <ResultCard
-          item={item}
-          index={index}
-          scrollX={scrollX}
-        />
+        <Pressable
+          onPress={() => router.push({ pathname: '/fixture/[id]', params: { id: String(item.id) } })}
+          accessibilityRole="button"
+          accessibilityLabel={`Ver detalles de ${item?.teams?.home?.name} vs ${item?.teams?.away?.name}`}
+        >
+          <ResultCard
+            item={item}
+            index={index}
+            scrollX={scrollX}
+          />
+        </Pressable>
       )}
     />
   );
