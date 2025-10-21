@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, Platform, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
@@ -112,9 +112,10 @@ export default function FixtureDetail() {
 
   /* ----------------------------------- Render ----------------------------------- */
   return (
-    <View className="flex-1 bg-primary">
+    <SafeAreaView className="flex-1 bg-primary" style={{ paddingTop: StatusBar.currentHeight || 0 }}>
+      <StatusBar barStyle="light-content" backgroundColor="#7F5AF0" />
       {/* Top bar */}
-      <View className="flex-row items-center justify-between px-4 pt-4 pb-2">
+      <View className="flex-row items-center justify-between px-4 pt-2 pb-2">
         <Text onPress={() => router.back()} className="text-white text-base">◀ Atrás</Text>
         <SafeText className="text-white/80 text-xs">{ui?.league}</SafeText>
         <View style={{ width: 32 }} />
@@ -152,11 +153,22 @@ export default function FixtureDetail() {
                 <Text className="text-white text-lg font-semibold mt-3" numberOfLines={1}>
                   {ui.home.name} vs {ui.away.name}
                 </Text>
-                <Text className="text-gray-200 text-xs mt-1" numberOfLines={1}>
+                <Text className="text-white text-[13px] mt-2"
+                    style={{ textShadowColor: 'rgba(0,0,0,0.4)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}
+                    numberOfLines={1}>
                   {ui.stadium}{ui.city ? ` · ${ui.city}` : ''}
                 </Text>
-                <Text className="text-gray-300 text-xs mt-1">{ui.dateStr} · {ui.timeStr}</Text>
-                <Text className="text-gray-400 text-[11px] mt-1">Árbitro: {ui.referee}</Text>
+                <Text className="text-white text-[12px] mt-1"
+                    style={{ textShadowColor: 'rgba(0,0,0,0.4)', 
+                    textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}
+                >
+                    {ui.dateStr} · {ui.timeStr}
+                </Text>
+                <Text className="text-white/90 text-[12px] mt-1"
+                    style={{ textShadowColor: 'rgba(0,0,0,0.4)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}
+                >
+                    Árbitro: {ui.referee}
+                </Text>
               </LinearGradient>
             </View>
           </View>
@@ -286,7 +298,7 @@ export default function FixtureDetail() {
           )}
         </ScrollView>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
